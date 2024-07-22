@@ -1,0 +1,98 @@
+version: '3.8'
+services:
+  primary1:
+    image: postgres:latest
+    container_name: pmaster
+    ports:
+      - "5432:5432"
+    volumes:
+      - D:/mini youtube/rep/pmaster_data:/var/lib/postgresql/data
+    environment:
+      POSTGRES_USER: postgres
+      POSTGRES_PASSWORD: postgres
+      POSTGRES_DB: main_database
+    restart: always
+
+  replica1:
+    image: postgres:latest
+    container_name: pstandby
+    ports:
+      - "5433:5432"
+    volumes:
+      - D:/mini youtube/rep/pstandby_data:/var/lib/postgresql/data
+    environment:
+      POSTGRES_USER: postgres
+      POSTGRES_PASSWORD: postgres
+      # POSTGRES_DB: secondryDB
+    restart: always
+
+  pgadmin:
+    image: dpage/pgadmin4:latest
+    container_name: my-pgadmin
+    environment:
+      PGADMIN_DEFAULT_EMAIL: admin@example.com
+      PGADMIN_DEFAULT_PASSWORD: admin
+    ports:
+      - "8080:80"
+    depends_on:
+      - primary1
+    restart: always
+
+  zookeeper:
+    image: zookeeper:3.8.0
+    ports:
+      - "2182:2181"
+
+  kafka-1:
+    image: wurstmeister/kafka:latest
+    container_name: kafka1
+    ports:
+      - "9092:9092"
+    environment:
+      KAFKA_BROKER_ID: 1
+      KAFKA_ZOOKEEPER_CONNECT: zookeeper:2181
+      KAFKA_ADVERTISED_LISTENERS: PLAINTEXT://kafka-1:9092
+      KAFKA_LISTENERS: PLAINTEXT://0.0.0.0:9092
+    depends_on:
+      - zookeeper
+
+  kafka-2:
+    image: wurstmeister/kafka:latest
+    container_name: kafka2
+    ports:
+      - "9093:9092"
+    environment:
+      KAFKA_BROKER_ID: 2
+      KAFKA_ZOOKEEPER_CONNECT: zookeeper:2181
+      KAFKA_ADVERTISED_LISTENERS: PLAINTEXT://kafka-2:9092
+      KAFKA_LISTENERS: PLAINTEXT://0.0.0.0:9092
+    depends_on:
+      - zookeeper
+  
+
+  minio:
+    image: quay.io/minio/minio
+    container_name: minio1
+    ports:
+      - "9000:9000"
+      - "9001:9001"
+    environment:
+      MINIO_ROOT_USER: ROOTUSER
+      MINIO_ROOT_PASSWORD: CHANGEME123
+    volumes:
+      - D:\minio\data:/data
+    command: server /data --console-address ":9001"
+    restart: unless-stopped
+
+   
+
+
+volumes:
+  pmaster_data:
+    driver: local
+  pstandby_data:
+    driver: local
+  minio-data:
+    driver: local
+  
+
