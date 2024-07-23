@@ -1,6 +1,7 @@
 const express=require("express");
 const authRoute=require('./routes/auth')
 const serviceRoute=require('./routes/service');
+const uploadRoute=require('./routes/upload')
 
 const {primarydb,replicadb}=require("./config/database")
 
@@ -23,6 +24,7 @@ primarydb.sync({ force: false }) //Use { force: true } for development only
     app.use(express.json());
     app.use('/api/auth',authRoute)
     app.use('/api/service',serviceRoute)
+    app.use('/api/video',uploadRoute)
 
 
     app.use((err, req, res, next) => {
