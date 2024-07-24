@@ -1,7 +1,7 @@
 const asyncHandler=require('express-async-handler')
 const subscription=require('../models/subscription');
 const User=require('../models/user');
-const {validationResult}=require('express-validator')
+
 
 const subscribe=asyncHandler(async(req,res,next)=>{
     

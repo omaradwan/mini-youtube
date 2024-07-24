@@ -13,20 +13,40 @@ const minioClient=new minio.Client({
 
 const kafka=new Kafka({
     // will change the host when making container from the app
-    clientId: 'kafkajs',
-    brokers: ['localhost:9096']
+    "clientId": 'kafkajs',
+    "brokers": ['localhost:9092']
 })
-
-const producer=kafka.producer({
-    createPartitioner: Partitioners.LegacyPartitioner
-});
-
-const startProducer = async () => {
-    await producer.connect();
-    console.log('Kafka producer is connected');
-  };
+run();
+async function run(){
+    const admin = kafka.admin();
+    try {
+      await admin.connect();
+      console.log("Connected to admin!");
   
-startProducer().catch(console.error);
+      const topicCreationResult = await admin.createTopics({
+        "topics": [
+          {
+            "topic": "video",
+            "numPartitions": 3,
+          }
+        ]
+      });
+      if (topicCreationResult) {
+        console.log("Topics created successfully!");
+      } else {
+        console.log("Topics already exist or there was an issue creating them.");
+      }
+    } catch (err) {
+      console.log("Error during topic creation:", err);
+    } finally {
+   //   await admin.disconnect();
+      console.log("Disconnected from admin!");
+    }
+}
+
+
+
+
 
 const bucketName="videobuffer"
 
@@ -39,25 +59,30 @@ const upload = asyncHandler(async (req, res, next) => {
         console.log(`Receiving file: ${filename}`);
 
         // Upload the file stream directly to MinIO
-        minioClient.putObject(bucketName, filename, file, { 'Content-Type': mimeType }, (err, etag) => {
+        minioClient.putObject(bucketName, filename, file, { 'Content-Type': mimeType }, async(err, etag) => {
             if (err) {
                 console.error('Upload error:', err);
                 return res.status(500).send('Upload failed');
             }
             console.log('Video has been sent to MinIO');
-
+///////////////////////////////////////////////////////////////////////////////////
             // Send event to Kafka after the file upload is complete
+  
+            const producer=kafka.producer();
+            await producer.connect()
+            console.log("connected to producer!")
+        
             const eventData = {
                 filename: filename,
                 bucket: bucketName,
                 mimetype: mimeType,
             };
 
-            producer.send({
-                topic: 'uploadVideo',
-                messages: [
+           await producer.send({
+                "topic": 'video',
+                "messages": [
                     {
-                        value: JSON.stringify(eventData),
+                        "value": JSON.stringify(eventData),
                     },
                 ],
             })
@@ -69,6 +94,9 @@ const upload = asyncHandler(async (req, res, next) => {
                 console.error('Kafka send error:', error);
                 res.status(500).send('Failed to notify Kafka');
             });
+            console.log("DONE")
+            await producer.disconnect();
+    ////////////////////////////////////////////////////////////////////////////////
         });
     });
 
