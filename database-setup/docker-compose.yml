@@ -14,7 +14,8 @@ services:
         POSTGRES_PASSWORD: postgres
         POSTGRES_DB: main_database
       restart: always
-
+      networks:
+        - shared-network
   replica1:
     image: postgres:latest
     container_name: pstandby
@@ -27,6 +28,8 @@ services:
       POSTGRES_PASSWORD: postgres
       POSTGRES_DB: main_database
     restart: always
+    networks:
+      - shared-network
 
   pgadmin:
     image: dpage/pgadmin4:latest
@@ -39,3 +42,12 @@ services:
     depends_on:
       - primary1
     restart: always
+    networks:
+    - shared-network
+
+
+
+networks:
+  shared-network:
+    external: true
+    name: kafkaimage-kafkanet    

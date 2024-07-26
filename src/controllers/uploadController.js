@@ -46,7 +46,7 @@ const run = async () => {
 }
 
 run().catch(console.error)
-//run();
+// run();
 // async function run(){
 //     const admin = kafka.admin();
 //     try {
@@ -81,9 +81,11 @@ run().catch(console.error)
 
 
 
-// const bucketName="videobuffer"
+ const bucketName="videobuffer"
 
  const upload = asyncHandler(async (req, res, next) => {
+    console.log("heyyy")
+   // res.send("JJJ");
    
     const busboy =  Busboy({ headers: req.headers });// know the header of the file to know how it will parse it
 
@@ -103,7 +105,7 @@ run().catch(console.error)
             // Send event to Kafka after the file upload is complete
   
             const producer=kafka.producer({
-              createPartitioner: Partitioners.LegacyPartitioner,
+        
             });
             try{
             await producer.connect();
@@ -136,8 +138,8 @@ run().catch(console.error)
         });
     });
 
-    // Pipe the incoming request to Busboy
-    req.pipe(busboy);// will recieve the req which is the file and send it to busboy instance and when busboy recieve files it emit event named file and it will listen at it
+    // // Pipe the incoming request to Busboy
+     req.pipe(busboy);// will recieve the req which is the file and send it to busboy instance and when busboy recieve files it emit event named file and it will listen at it
  });
 
 

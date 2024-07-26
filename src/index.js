@@ -17,13 +17,18 @@ require('dotenv').config();
 const app=express();
 
 
+app.use(express.json());
+app.use('/api/auth',authRoute)
 // for creation of tables
-primarydb.sync({ force: false }) //Use { force: true } for development only
+primarydb.sync({ force: true }) //Use { force: true } for development only
   .then(() => {
-    console.log('Database & tables created!');
-    app.use(express.json());
-    app.use('/api/auth',authRoute)
-    app.use('/api/service',serviceRoute)
+
+    console.log('Database & tables created!!!');
+  
+    // app.use('/api/service',serviceRoute)
+    
+   
+    
     app.use('/api/video',uploadRoute)
 
 
@@ -33,10 +38,18 @@ primarydb.sync({ force: false }) //Use { force: true } for development only
       res.status(500).send(err.message);
     });
 
-    app.listen(process.env.PORT,()=>{
-      console.log("connected to server ...")
-  })
+  
 
 })
+
+app.post('/api/service/subscribe', (req, res) => {
+  // Handle the request
+  console.log("yarb")
+  res.send('Subscription received');
+});
+app.listen(8000,'0.0.0.0',()=>{
+  console.log("connected to server ..")
+})
+
 
 

@@ -15,4 +15,10 @@ services:
       - D:/minio/data:/data
     command: server /data --console-address ":9001"
     restart: unless-stopped
+    networks:
+      - shared-network
 
+networks:
+  shared-network:
+    external: true
+    name: kafkaimage-kafkanet
