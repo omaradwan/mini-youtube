@@ -1,0 +1,42 @@
+version: '3.8'
+
+
+services:
+  consumer1:
+    build: .
+    container_name: c1
+    environment:
+      KAFKA_BROKER: kafka1:9092,kafka2:9092
+      KAFKA_TOPIC: video
+      KAFKA_GROUP_ID: g
+    networks:
+      - shared-network
+  
+  consumer2:
+    build: .
+    container_name: c2
+    environment:
+      KAFKA_BROKER: kafka1:9092,kafka2:9092
+      KAFKA_TOPIC: video
+      KAFKA_GROUP_ID: g
+    networks:
+      - shared-network
+
+
+
+  consumer3:
+    build: .
+    container_name: c3
+    environment:
+      KAFKA_BROKER: kafka1:9092,kafka2:9092
+      KAFKA_TOPIC: video
+      KAFKA_GROUP_ID: g
+    networks:
+      - shared-network
+
+
+
+networks:
+  shared-network:
+    external: true
+    name: kafkaimage-kafkanet  
