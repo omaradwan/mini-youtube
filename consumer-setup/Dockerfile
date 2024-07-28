@@ -1,6 +1,10 @@
 # Dockerfile
 FROM node:14
 
+# Install FFmpeg
+RUN apt-get update && apt-get install -y ffmpeg
+
+
 WORKDIR /app
 
 # Copy package.json and package-lock.json from the build context

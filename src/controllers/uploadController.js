@@ -8,7 +8,7 @@ const minioClient=new minio.Client({
   endPoint: 'minio',// change it when contanerize the app
   port: 9000,
   useSSL: false,
-  accessKey: 'ROOTUSER',
+  accessKey: "storedObject",
   secretKey: 'CHANGEME123'
 })
 
@@ -16,66 +16,35 @@ const kafka = new Kafka({
   clientId: 'kafkajs',
   brokers: ['kafka1:9092', 'kafka2:9092'], // Use your Kafka broker addresses
 });
-const producer = kafka.producer()
-const consumer = kafka.consumer({ groupId: 'test-group' })
 
-const run = async () => {
-  // Producing
-  await producer.connect()
-  console.log("herre")
-  await producer.send({
-    topic: 'video',
-    messages: [
-      { value: 'Hello KafkaJS user!' },
-    ],
-  })
 
-  // Consuming
-  await consumer.connect()
-  await consumer.subscribe({ topic: 'video', fromBeginning: true })
+// const run = async () => {
+//   // Producing
+//   await producer.connect()
+//   console.log("herre")
+//   await producer.send({
+//     topic: 'video',
+//     messages: [
+//       { value: 'Hello KafkaJS user!' },
+//     ],
+//   })
 
-  await consumer.run({
-    eachMessage: async ({ topic, partition, message }) => {
-      console.log({
-        partition,
-        offset: message.offset,
-        value: message.value.toString(),
-      })
-    },
-  })
-}
+//   // Consuming
+//   await consumer.connect()
+//   await consumer.subscribe({ topic: 'video', fromBeginning: true })
 
-run().catch(console.error)
-// run();
-// async function run(){
-//     const admin = kafka.admin();
-//     try {
-      
-//       await admin.connect();
-//       console.log("Connected to admin!");
-  
-//       const topicCreationResult = await admin.createTopics({
-//         "topics": [
-//           {
-//             "topic": "videoo",
-//             "numPartitions": 3,
-//             // "replicationFactor": 2, // Adjust replication factor if needed
-//           }
-//         ]
-//       });
-//       if (topicCreationResult) {
-//         console.log("Topics created successfully!");
-//       } else {
-//         console.log("Topics already exist or there was an issue creating them.");
-//       }
-//     } catch (err) {
-//       console.log("Error during topic creation:", err);
-//     } 
-//     finally {
-//      await admin.disconnect();
-//       console.log("Disconnected from admin!");
-//     }
+//   await consumer.run({
+//     eachMessage: async ({ topic, partition, message }) => {
+//       console.log({
+//         partition,
+//         offset: message.offset,
+//         value: message.value.toString(),
+//       })
+//     },
+//   })
 // }
+
+// run().catch(console.error)
 
 
 
@@ -84,8 +53,8 @@ run().catch(console.error)
  const bucketName="videobuffer"
 
  const upload = asyncHandler(async (req, res, next) => {
-    console.log("heyyy")
-   // res.send("JJJ");
+ 
+
    
     const busboy =  Busboy({ headers: req.headers });// know the header of the file to know how it will parse it
 
