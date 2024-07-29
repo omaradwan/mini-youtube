@@ -17,46 +17,23 @@ const kafka = new Kafka({
   brokers: ['kafka1:9092', 'kafka2:9092'], // Use your Kafka broker addresses
 });
 
-
-// const run = async () => {
-//   // Producing
-//   await producer.connect()
-//   console.log("herre")
-//   await producer.send({
-//     topic: 'video',
-//     messages: [
-//       { value: 'Hello KafkaJS user!' },
-//     ],
-//   })
-
-//   // Consuming
-//   await consumer.connect()
-//   await consumer.subscribe({ topic: 'video', fromBeginning: true })
-
-//   await consumer.run({
-//     eachMessage: async ({ topic, partition, message }) => {
-//       console.log({
-//         partition,
-//         offset: message.offset,
-//         value: message.value.toString(),
-//       })
-//     },
-//   })
-// }
-
-// run().catch(console.error)
-
-
-
+const producer=kafka.producer({});
 
 
  const bucketName="videobuffer"
 
  const upload = asyncHandler(async (req, res, next) => {
- 
-
+  
    
+
+    // still need to check that this user has already an account
+
     const busboy =  Busboy({ headers: req.headers });// know the header of the file to know how it will parse it
+    const formData={};
+    busboy.on('field', (fieldname, val) => {
+      console.log(`Field [${fieldname}]: ${val}`);
+      formData[fieldname] = val;
+    });
 
     busboy.on('file', (fieldname, file, info) => { // will put all the chunks that are coming in file object and after recieving all it will be 
                                                    // sent to minio objectstore and object store will internally take them as streams
@@ -73,9 +50,6 @@ const kafka = new Kafka({
 
             // Send event to Kafka after the file upload is complete
   
-            const producer=kafka.producer({
-        
-            });
             try{
             await producer.connect();
             console.log("Connected to producer!");
@@ -84,6 +58,9 @@ const kafka = new Kafka({
               filename: filename,
               bucket: bucketName,
               mimetype: mimeType,
+              title:formData['title'],
+              description:formData['description'],
+              userId:formData['userId']
             };
         
             const result = await producer.send({
@@ -103,13 +80,20 @@ const kafka = new Kafka({
             console.log("Disconnected from producer.");
           }
             console.log("DONE")
-            await producer.disconnect();
+            res.status(200).json("video uploaded successfully")
         });
     });
 
     // // Pipe the incoming request to Busboy
      req.pipe(busboy);// will recieve the req which is the file and send it to busboy instance and when busboy recieve files it emit event named file and it will listen at it
  });
+
+// Graceful shutdown on SIGINT
+process.on('SIGINT', async () => {
+  await producer.disconnect();
+  console.log('Kafka producer disconnected');
+  process.exit();
+});
 
 
 

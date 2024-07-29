@@ -3,6 +3,9 @@ const minio=require('minio')
 const ffmpeg = require('fluent-ffmpeg');
 const fs=require('fs');
 const path = require('path');
+const Video=require('./video');
+
+
 
 const kafka = new Kafka ({
     clientId: 'kafkajs',
@@ -17,6 +20,8 @@ const minioClient = new minio.Client({
   secretKey: "CHANGEME123"
 });
 
+
+
 const consumer=kafka.consumer({ groupId: process.env.KAFKA_GROUP_ID });
 
 const run = async () => {
@@ -30,7 +35,7 @@ const run = async () => {
           value: message.value.toString()
         });
         const videoData = JSON.parse(message.value.toString());
-        const { bucket, filename } = videoData;
+        const { bucket, filename,title,description,userId } = videoData;
         console.log("DDD",bucket,filename)
         // Download the video from the object store buffer
         const inputPath = `/tmp/${filename}`;
@@ -53,13 +58,14 @@ const run = async () => {
                   console.log("ready to send to object store...")
                   for (const version of encodedVersions) {
                     const versionStream = fs.createReadStream(version.path);// generate readable stream to use it in putobject so encoded videos will be sent to minio as chunks which improve efficiency
-                    const versionBucket = 'vi  deostore'
+                    const versionBucket = 'videostore'
                     
                     await minioClient.putObject(versionBucket, version.name, versionStream, (err) => {
                       if (err) {
                         console.error('Error uploading encoded video to MinIO:', err);
                       } else {
                         console.log(`Uploaded ${version.name} to ${versionBucket} successfully`);
+                        SaveInDB(version.name,title,description,userId);
                       }
                     });
 
@@ -90,13 +96,15 @@ const run = async () => {
         })
 
       },
+
+
     });
   };
   
   run().catch(console.error);
 
 
-const encodeVideo=async(inputPath, originalFilename)=>{
+const encodeVideo=(inputPath, originalFilename)=>{
     const versions = [
     { name: `${originalFilename}-480p.mp4`, resolution: '640x480' },
     { name: `${originalFilename}-720p.mp4`, resolution: '1280x720' },
@@ -115,5 +123,20 @@ const encodeVideo=async(inputPath, originalFilename)=>{
         .run();
     });
   }));
+}
+
+const SaveInDB=async(url,title,description,userId)=>{
+ try{ 
+  const newVideo=new Video({
+    url,
+    title,
+    description,
+    userId
+  })
+  await newVideo.save();
+}catch(err){
+  console.log("saving in vide DB" ,err);
+}
+  
 }
 

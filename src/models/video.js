@@ -1,7 +1,7 @@
 const {primarydb}=require("../config/database")
 const {DataTypes}=require("sequelize")
 const user = require("./user")
-const { describe } = require("node:test")
+
 
 const video=primarydb.define('Video',{
     url:{

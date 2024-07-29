@@ -15,7 +15,7 @@ COPY package.json .
 RUN npm install
 
 # Copy the consumer.js file into /app
-COPY consumer.js .
+COPY . .
 
 # Command to run the consumer
 CMD ["node", "consumer.js"]
