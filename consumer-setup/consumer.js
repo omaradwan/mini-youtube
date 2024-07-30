@@ -42,12 +42,12 @@ const run = async () => {
         const fileStream = fs.createWriteStream(inputPath);// create a write stream so chunks can be written in it and it will be stored locally for a time
                                                            // with name input path
 
-        minioClient.getObject(bucket,filename,(err,dataStream)=>{
-              if (err) {
+        minioClient.getObject(bucket,filename,(err,dataStream)=>{//dataStream is instance of readable stream created by minio when getObject is called
+              if (err) {                                         // so the callback function will be called when this readable stream is ready and for every chunk came it will emit event and write it in writable stream in .pipe function
               console.error('Error getting object from MinIO:', err);
               return;
               }
-              dataStream.pipe(fileStream);// when chunk came from get object then dataStream.pipe will read this chunk and write it in filestream
+              dataStream.pipe(fileStream);// when chunk came from get object then dataStream.pipe will  write it in filestream
 
               dataStream.on('end', async () => {
                 try {
@@ -65,10 +65,15 @@ const run = async () => {
                         console.error('Error uploading encoded video to MinIO:', err);
                       } else {
                         console.log(`Uploaded ${version.name} to ${versionBucket} successfully`);
-                        SaveInDB(version.name,title,description,userId);
+                       
                       }
                     });
-
+                    try{
+                      SaveInDB(version.name,title,description,userId);
+                      console.log("saved in db successfully")
+                    }catch(err){
+                      console.log("can not save in db")
+                    }
                     //delete the local encoded video file
                     fs.unlinkSync(version.path);
                   }
