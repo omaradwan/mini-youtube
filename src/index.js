@@ -26,6 +26,11 @@ const app=express();
 
 
 const syncDatabase = async () => {
+
+  if (process.env.NODE_APP_HANDLE_DB_INIT !== 'true') {
+    console.log('Skipping database setup.');
+    return;
+  }
   try {
       // Sync all models with the database
       await primarydb.sync({ force: true }); // Use { force: true } only in development
@@ -70,7 +75,9 @@ app.use(express.json());
 app.use('/api/service',serviceRoute)
 app.use('/api/auth',authRoute)
 app.use('/api/video',uploadRoute)
-
+app.get('/', (req, res) => {
+  res.send(`Response from ${process.env.PORT}`);
+});
 
 app.use((err, req, res, next) => {
   // console.error("An error occurred:", err.message);
@@ -79,8 +86,14 @@ app.use((err, req, res, next) => {
 });
 
 app.listen(8000,'0.0.0.0',()=>{
-  console.log("connected to server ..")
+  console.log("connected to server ..",process.env.PORT)
 })
+
+
+
+
+
+
 
 
 

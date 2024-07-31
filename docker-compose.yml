@@ -10,8 +10,23 @@ services:
       - ./src:/app/src:ro
     environment:
       - PORT=8000
+      - NODE_APP_HANDLE_DB_INIT=true
     networks:
       - shared-network
+    
+  node-app2:
+    build: .
+    container_name: mini-youtube2
+    ports:
+      - '8001:8000'
+    volumes:
+      - ./src:/app/src:ro
+    environment:
+      - PORT=8001
+      - NODE_APP_HANDLE_DB_INIT=false
+    networks:
+      - shared-network
+
 
 
 networks:

@@ -53,7 +53,7 @@ const run = async () => {
                 try {
                   console.log("encoding...")
                   const encodedVersions = await encodeVideo(inputPath, filename);
-
+                  console.log(encodedVersions)
                   // Upload the encoded versions to the object store
                   console.log("ready to send to object store...")
                   for (const version of encodedVersions) {
@@ -68,14 +68,14 @@ const run = async () => {
                        
                       }
                     });
-                    try{
-                      SaveInDB(version.name,title,description,userId);
-                      console.log("saved in db successfully")
-                    }catch(err){
-                      console.log("can not save in db")
-                    }
                     //delete the local encoded video file
                     fs.unlinkSync(version.path);
+                  }
+                  try{
+                    SaveInDB(filename,title,description,userId);
+                    console.log("saved in db successfully")
+                  }catch(err){
+                    console.log("can not save in db")
                   }
 
                   // Delete the original video from the buffer
@@ -121,6 +121,7 @@ const encodeVideo=(inputPath, originalFilename)=>{
 
     return new Promise((resolve, reject) => {// will open many process to encode the video to diff versions in parallel and for each version return resolve or reject
       ffmpeg(inputPath)
+        .videoCodec('libx264')
         .size(version.resolution)
         .output(outputPath)
         .on('end', () => resolve({ name: version.name, path: outputPath }))
