@@ -4,6 +4,11 @@ const user = require("./user")
 
 
 const video=primarydb.define('Video',{
+    id: {
+        type: DataTypes.INTEGER,
+        autoIncrement: true, // Auto-increment for primary key
+        primaryKey: true,    // Mark this column as the primary key
+      },
     url:{
        type:DataTypes.STRING,
        unique:true,

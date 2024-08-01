@@ -22,7 +22,9 @@ const minioClient = new minio.Client({
 
 
 
-const consumer=kafka.consumer({ groupId: process.env.KAFKA_GROUP_ID });
+const consumer=kafka.consumer({
+   groupId: process.env.KAFKA_GROUP_ID,
+   requestTimeout: 30000 });
 
 const run = async () => {
     await consumer.connect();

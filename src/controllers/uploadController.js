@@ -2,7 +2,8 @@ const asyncHandler=require('express-async-handler')
 const minio=require('minio')
 const Busboy=require('busboy')
 const {Kafka}=require('kafkajs')
-// const { fstat } = require('minio/dist/esm/internal/async.mjs')
+const User=require('../models/user');
+const Video=require('../models/video')
 
 const minioClient=new minio.Client({
   endPoint: 'minio',// change it when contanerize the app
@@ -17,7 +18,9 @@ const kafka = new Kafka({
   brokers: ['kafka1:9092', 'kafka2:9092'], // Use your Kafka broker addresses
 });
 
-const producer=kafka.producer({});
+const producer=kafka.producer({
+  requestTimeout: 30000
+});
 
 
  const bucketName="videobuffer"
@@ -75,9 +78,6 @@ const producer=kafka.producer({});
             console.log("Message sent successfully:", result);
           } catch (error) {
             console.error("Error sending message:", error.message, error.stack);
-          } finally {
-            await producer.disconnect();
-            console.log("Disconnected from producer.");
           }
             console.log("DONE")
             res.status(200).json("video uploaded successfully")
@@ -96,9 +96,57 @@ process.on('SIGINT', async () => {
 });
 
 
+const watch=asyncHandler(async(req,res,next)=>{
+       const result={err:[],status:"successfull"};  
+       const {userId,url,quality}=req.body;
+      
+       const checkUser=await User.findByPk(userId)
+       if(!checkUser){
+            result.err.push("invalid user id");
+            result.status='failed';
+            return res.status(400).json(result);
+       }
+       const video=await Video.findOne({
+        where:{
+          url:url
+        }
+       })
+       if(!video){
+        result.err.push("invalid video url")
+        result.status="failed"
+        return res.status(400).json(result);
+       }
+       let bucket="videostore";
+       let newUrl=`${url}.mp4-${quality}.mp4`;
+       console.log(newUrl)
+       try{
+         const statObject=await minioClient.statObject(bucket,newUrl);
+         const fileSize=statObject.size;
+         const ContentType='video/mp4'
+        console.log(ContentType)
+        res.writeHead(200,{
+          'Content-Length': fileSize,
+          'content-Type': ContentType,
+        })
 
+        minioClient.getObject(bucket,newUrl,(err,stream)=>{
+          if (err) {
+            return res.status(500).send(err);
+          }
+          stream.pipe(res);
+          stream.on('end',()=>{
+            console.log("video has sent successfully")
+          })
+
+        })
+       }catch (err) {
+        res.status(500).send(err.message);
+      }
+
+})
 module.exports={
-    upload
+    upload,
+    watch
 }
 
 

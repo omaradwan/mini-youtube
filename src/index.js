@@ -41,7 +41,7 @@ const syncDatabase = async () => {
 
   }
 };
-syncDatabase();
+// syncDatabase();
 // for creation of tables
 // primarydb.sync({ force: true }) //Use { force: true } for development only
 //   .then(() => {
