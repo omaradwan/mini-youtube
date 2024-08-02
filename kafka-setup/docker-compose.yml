@@ -59,37 +59,26 @@ services:
     networks:
       - shared-network
 
-  kafka-init:
-    image: bitnami/kafka:latest
-    depends_on:
-      - kafka1
-      - kafka2
-    entrypoint: 
-      - /bin/bash
-      - -c
-      - |
-        while ! curl -s kafka1:9092; do
-          sleep 1;
-        done;
-        while ! curl -s kafka2:9092; do
-          sleep 1;
-        done;
-        kafka-topics.sh --create --bootstrap-server kafka1:9092 --replication-factor 2 --partitions 2 --topic video;
-    networks:
-      - shared-network
+  # kafka-init:
+  #   image: bitnami/kafka:latest
+  #   depends_on:
+  #     - kafka1
+  #     - kafka2
+  #   networks:
+  #     - shared-network
 volumes:
   kafka-data1:
     driver: local
-    driver_opts:
-      type: "none"
-      o: "bind"
-      device: "C:\\path\\to\\local\\kafka-data1"
+    # driver_opts:
+    #   type: "none"
+    #   o: "bind"
+    #   device: "C:\\path\\to\\local\\kafka-data1"
   kafka-data2:
     driver: local
-    driver_opts:
-      type: "none"
-      o: "bind"
-      device: "C:\\path\\to\\local\\kafka-data2"
+    # driver_opts:
+    #   type: "none"
+    #   o: "bind"
+    #   device: "C:\\path\\to\\local\\kafka-data2"
 
 networks:
   shared-network:
