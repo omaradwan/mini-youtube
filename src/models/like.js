@@ -23,7 +23,7 @@ const like=primarydb.define('Like',{
         onUpdate:'CASCADE'
     },
     likeType:{
-        type:DataTypes.BOOLEAN,
+        type:DataTypes.INTEGER,
         allowNull:false
     }
 })

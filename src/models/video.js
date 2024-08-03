@@ -31,6 +31,10 @@ const video=primarydb.define('Video',{
         type:DataTypes.INTEGER,
         defaultValue:0
     },
+    dislikeCounts:{
+        type:DataTypes.INTEGER,
+        defaultValue:0
+    },
     commentCounts:{
         type:DataTypes.INTEGER,
         defaultValue:0
