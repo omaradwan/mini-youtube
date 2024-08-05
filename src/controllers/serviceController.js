@@ -167,10 +167,62 @@ const removeManageLike=asyncHandler(async(req,res,next)=>{
     return res.status(200).json({msg:"dislike added/removed successfully",status:result.status});
 })
 
+const feed=asyncHandler(async(req,res,next)=>{
+    let result={err:[],status:"successfull"}
+    let {userId}=req.body;
+    // will check it by token later
+    let user=await User.findByPk(userId);
+    
+    if(!user){
+        result.err.push("no user found with this id");
+        result.status="failed";
+        return res.status(400).json(result);
+    }
+    let subsId=await subscription.findAll({
+        where:{
+           subscriberId:userId
+        }
+    })
+  //  console.log(subsId);
+    if(!subsId){
+        let videos=await Video.findAll({
+            attributes:['url'],
+            limit:6
+        })
+    //    console.log("videos ",videos);
+        urls=videos.map(v=>v.dataValues.url);
+        return res.status(200).json(...urls);
+    }
+    // if there is subsId then i will divide it by 6 to return the same no of videos from each subscriber
+    subsId=subsId.map(id=>id.subscribedToId);
+   // console.log(subsId)
+    let numUrlsPerSubscriber=Math.ceil(subsId.length/6);
+    let VideosUrl=[]
+
+    for(var id of subsId){
+        let retUrl=await Video.findAll({
+            where:{
+                userId:id
+            },
+            attributes:['url'],
+            limit:numUrlsPerSubscriber
+        })
+      //  console.log(retUrl)
+        retUrl.map(ur=>{
+         //   console.log(ur.url)
+            VideosUrl.push(ur.url)
+    })
+    }
+    console.log(VideosUrl)
+    return res.status(200).json({"urls":VideosUrl});
+
+})
+
 
 module.exports={
     subscribe,
     cancelSub,
     addManageLike,
-    removeManageLike
+    removeManageLike,
+    feed
 }
