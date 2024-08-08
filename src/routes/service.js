@@ -8,5 +8,5 @@ route.post('/remove_subscribtion',serviceController.cancelSub)
 route.post('/manage_like',serviceController.addManageLike);
 route.post('/manage_dislike',serviceController.removeManageLike)
 route.get('/feed',serviceController.feed)
-
+route.post('/addComment',serviceController.addComment)
 module.exports=route

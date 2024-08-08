@@ -3,6 +3,7 @@ const subscription=require('../models/subscription');
 const User=require('../models/user');
 const Video=require('../models/video');
 const Like=require('../models/like')
+const Comment=require('../models/comments')
 const { where } = require('sequelize');
 
 
@@ -209,20 +210,50 @@ const feed=asyncHandler(async(req,res,next)=>{
         })
       //  console.log(retUrl)
         retUrl.map(ur=>{
-         //   console.log(ur.url)
-            VideosUrl.push(ur.url)
+        VideosUrl.push(ur.url)
     })
     }
     console.log(VideosUrl)
     return res.status(200).json({"urls":VideosUrl});
 
 })
+const addComment=asyncHandler(async(req,res,next)=>{
+    let result={err:[],status:"successfull"}
+    let {userId,videoId,comment}=req.body;
+    // will check it by token later
 
+    let user=await User.findByPk(userId);
+    let vid=await Video.findByPk(videoId);
+    if(!user){
+        result.err.push("no user found with this id");
+        result.status="failed"
+        return res.status(400).json(result)
+    }
+    if(!vid){
+        result.err.push("no video found with this id");
+        result.status='failed';
+        return res.status(400).json(result)
+    }
+    let newComment=new Comment({
+        videoId,
+        userId,
+        comments:comment
+    })
+   let savedComment= await newComment.save();
+   if(!savedComment){
+    result.err.push("error while saving the comment");
+    result.status='failed';
+    return res.status(500).json(result)
+   }
+   return res.status(200).json({msg:"comment uploaded successfully",comment:savedComment,status:result.status});
+
+})
 
 module.exports={
     subscribe,
     cancelSub,
     addManageLike,
     removeManageLike,
-    feed
+    feed,
+    addComment
 }

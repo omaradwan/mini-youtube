@@ -37,7 +37,7 @@ const login=asyncHandler(async(req,res,next)=>{
     // generate Token
     //////////////////////////
    
-    return res.status(200).json({msg:"logged in successfilly",status:result.status})
+    return res.status(200).json({msg:"logged in successfilly",status:result.status,userData:user})
 })
 
 const signup=asyncHandler(async(req,res,next)=>{
@@ -69,7 +69,7 @@ const signup=asyncHandler(async(req,res,next)=>{
         password:encryptedPass
     })
     await newUser.save();
-    return res.status(200).json({msg:"User created successfully",status:result.status})
+    return res.status(200).json({msg:"User created successfully",status:result.status,userData:newUser})
 })
 
 
