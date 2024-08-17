@@ -2,6 +2,7 @@ const asyncHandler=require('express-async-handler')
 const bcrypt=require('bcrypt');
 const User=require('../models/user');
 const {validationResult}=require('express-validator')
+const {generateToken}=require("../middleware/TokensManagment")
 
 
 const login=asyncHandler(async(req,res,next)=>{
@@ -21,7 +22,6 @@ const login=asyncHandler(async(req,res,next)=>{
             email:email
         }
      });
-    console.log(user)
     if(!user){
         result.err.push("email is not correct");
         result.status="Failed";
@@ -35,7 +35,10 @@ const login=asyncHandler(async(req,res,next)=>{
     }
     //////////////////////////
     // generate Token
+    const retToken=await generateToken({id:user.id});
+    user.token=retToken;
     //////////////////////////
+
    
     return res.status(200).json({msg:"logged in successfilly",status:result.status,userData:user})
 })
@@ -59,15 +62,15 @@ const signup=asyncHandler(async(req,res,next)=>{
         return res.status(400).json(result);
     }
 
-    //////////////////////////
-    // generate Token
-    //////////////////////////
+   
     let encryptedPass=await bcrypt.hash(password,14);
     let newUser=new User({
         username,
         email,
         password:encryptedPass
     })
+    const retToken=await generateToken({id:newUser.id});
+    newUser.token=retToken;
     await newUser.save();
     return res.status(200).json({msg:"User created successfully",status:result.status,userData:newUser})
 })

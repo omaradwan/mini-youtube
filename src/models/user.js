@@ -37,6 +37,9 @@ const User=primarydb.define('User',{
      noOfSubscribers:{
         type:DataTypes.INTEGER,
         defaultValue:0
+     },
+     token:{
+      type:String
      }
 
 },{

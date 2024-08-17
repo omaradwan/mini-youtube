@@ -248,6 +248,31 @@ const addComment=asyncHandler(async(req,res,next)=>{
    return res.status(200).json({msg:"comment uploaded successfully",comment:savedComment,status:result.status});
 
 })
+const getComment=asyncHandler(async(req,res,next)=>{
+    if(!req.isAuth){
+        throw new Error("not authenticated")
+    }
+
+    let result={err:[],status:"successfull"}
+    let {videoId}=req.body;
+    let userId=req.userId;
+
+    let user=await User.findByPk(userId);
+    if(!user){
+        result.err.push("no user found with this id");
+        result.status="failed"
+        return res.status(400).json(result)
+    }
+    let comments=await Comment.findAll({
+        where:{
+            videoId:videoId
+        }
+    })
+    if(!comments){
+        return res.status(200).json({msg:"No comments in this vidoe",status:result.status});
+    }
+    return res.status(200).json({Comments:comments,status:result.status})
+})
 
 module.exports={
     subscribe,
@@ -255,5 +280,6 @@ module.exports={
     addManageLike,
     removeManageLike,
     feed,
-    addComment
+    addComment,
+    getComment
 }
