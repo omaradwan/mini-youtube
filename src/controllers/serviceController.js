@@ -4,14 +4,18 @@ const User=require('../models/user');
 const Video=require('../models/video');
 const Like=require('../models/like')
 const Comment=require('../models/comments')
+const WatchLater=require("../models/watchLater");
 const { where } = require('sequelize');
 
 
 const subscribe=asyncHandler(async(req,res,next)=>{
-    
+    if(!req.isAuth){
+        throw new Error("not authenticated")
+    }
     let result={err:[],status:"Successfull"};
 
-    let {subscriberId,subscribedToId}=req.body;
+    let {subscribedToId}=req.body;
+    let subscriberId=req.userId;
     if(!subscriberId||!subscribedToId){
         result.err.push("there is missing id");
         result.status="Failed";
@@ -46,9 +50,13 @@ const subscribe=asyncHandler(async(req,res,next)=>{
 })
 
 const cancelSub=asyncHandler(async(req,res,next)=>{
+    if(!req.isAuth){
+        throw new Error("not authenticated")
+    }
     let result={err:[],status:"Successfull"};
 
-    let {currentUserId,removeSubscribtionFromId}=req.body;
+    let {removeSubscribtionFromId}=req.body;
+    let currentUserId=req.userId;
     // currentUser hyshel el subscribe el3mlo l el user eltany elhwa removeSubscribtionId
     if(!currentUserId||!removeSubscribtionFromId){
         result.err.push("there is missing id");
@@ -90,11 +98,13 @@ const cancelSub=asyncHandler(async(req,res,next)=>{
 const addManageLike=asyncHandler(async(req,res,next)=>{
     
     // still need to check if user is authorized by tokens 
-    
+    if(!req.isAuth){
+        throw new Error("not authenticated")
+    }
     const result={err:[],status:"successfull"}
     //likeType->1 means up ->0 means down
-    const{userId,videoUrl,likeType}=req.body;
-    
+    const{videoUrl,likeType}=req.body;
+    let userId=req.userId;
     const vid=await Video.findOne({
         where:{
             url:videoUrl
@@ -130,11 +140,13 @@ const addManageLike=asyncHandler(async(req,res,next)=>{
 
 const removeManageLike=asyncHandler(async(req,res,next)=>{
     // still need to check if user is authorized by tokens 
-
+    if(!req.isAuth){
+        throw new Error("not authenticated")
+    }
     const result={err:[],status:"successfull"}
     //likeType->1 means up ->0 means down
-    const{userId,videoUrl,likeType}=req.body;
-
+    const{videoUrl,likeType}=req.body;
+    let userId=req.userId;
     const vid=await Video.findOne({
         where:{
             url:videoUrl
@@ -169,8 +181,11 @@ const removeManageLike=asyncHandler(async(req,res,next)=>{
 })
 
 const feed=asyncHandler(async(req,res,next)=>{
+    if(!req.isAuth){
+        throw new Error("not authenticated")
+    }
     let result={err:[],status:"successfull"}
-    let {userId}=req.body;
+    let userId=req.userId;
     // will check it by token later
     let user=await User.findByPk(userId);
     
@@ -218,10 +233,13 @@ const feed=asyncHandler(async(req,res,next)=>{
 
 })
 const addComment=asyncHandler(async(req,res,next)=>{
+    if(!req.isAuth){
+        throw new Error("not authenticated")
+    }
     let result={err:[],status:"successfull"}
-    let {userId,videoId,comment}=req.body;
+    let {videoId,comment}=req.body;
     // will check it by token later
-
+    let userId=req.userId;
     let user=await User.findByPk(userId);
     let vid=await Video.findByPk(videoId);
     if(!user){
@@ -274,6 +292,28 @@ const getComment=asyncHandler(async(req,res,next)=>{
     return res.status(200).json({Comments:comments,status:result.status})
 })
 
+const addWatchLater=asyncHandler(async(req,res,next)=>{
+    if(!req.isAuth){
+        throw new Error("not authenticated")
+    }
+
+    let result={err:[],status:"successfull"}
+    let {videoId}=req.body;
+    let userId=req.userId;
+    let checkVid=await Video.findByPk(videoId);
+    if(!checkVid){
+        result.err.push("no video found");
+        result.status="failed";
+        return res.status(500).json(result);
+    }
+    let watchLater= new WatchLater({
+        videoId,
+        userId
+    })
+    await watchLater.save();
+    return res.status(200).json({msg:"added to watch later",status:result.status});
+})
+
 module.exports={
     subscribe,
     cancelSub,
@@ -281,5 +321,6 @@ module.exports={
     removeManageLike,
     feed,
     addComment,
-    getComment
+    getComment,
+    addWatchLater
 }
