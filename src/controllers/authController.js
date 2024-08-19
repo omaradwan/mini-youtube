@@ -6,6 +6,7 @@ const {generateToken}=require("../middleware/TokensManagment")
 
 
 const login=asyncHandler(async(req,res,next)=>{
+    
     let errors=validationResult(req)
     if(!errors.isEmpty()){
         return res.status(400).json({errors:errors.array()});
@@ -44,7 +45,7 @@ const login=asyncHandler(async(req,res,next)=>{
 })
 
 const signup=asyncHandler(async(req,res,next)=>{
-
+    console.log("Inn")
     let errors=validationResult(req)
     //console.log(errors)
     if(!errors.isEmpty()){

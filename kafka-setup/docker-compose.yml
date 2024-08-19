@@ -29,6 +29,7 @@ services:
       - kafka-data1:/kafka/data
     networks:
       - shared-network
+      - shared-network2
 
   kafka2:
     image: bitnami/kafka:latest
@@ -58,6 +59,7 @@ services:
       - kafka-data2:/kafka/data
     networks:
       - shared-network
+      - shared-network2
 
   # kafka-init:
   #   image: bitnami/kafka:latest
@@ -83,4 +85,7 @@ volumes:
 networks:
   shared-network:
     external: true
-    name: kafkaimage-kafkanet
+    name: network3
+  shared-network2:
+    external: true
+    name: network4

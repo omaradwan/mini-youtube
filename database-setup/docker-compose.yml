@@ -16,6 +16,7 @@ services:
       restart: always
       networks:
         - shared-network
+        - shared-network2
   replica1:
     image: postgres:latest
     container_name: pstandby
@@ -30,6 +31,7 @@ services:
     restart: always
     networks:
       - shared-network
+      - shared-network2
 
   pgadmin:
     image: dpage/pgadmin4:latest
@@ -44,10 +46,14 @@ services:
     restart: always
     networks:
     - shared-network
+    - shared-network2
 
 
 
 networks:
   shared-network:
     external: true
-    name: kafkaimage-kafkanet    
+    name: network5    
+  shared-network2:
+    external: true
+    name: network3

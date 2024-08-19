@@ -16,4 +16,4 @@ services:
 networks:
   shared-network:
     external: true
-    name: kafkaimage-kafkanet
+    name: network1

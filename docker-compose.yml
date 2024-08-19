@@ -13,6 +13,8 @@ services:
       - NODE_APP_HANDLE_DB_INIT=true
     networks:
       - shared-network
+      - shared-network2
+      - shared-network3
     
   node-app2:
     build: .
@@ -26,10 +28,20 @@ services:
       - NODE_APP_HANDLE_DB_INIT=false
     networks:
       - shared-network
+      - shared-network2
+      - shared-network3
 
 
 
 networks:
   shared-network:
     external: true
-    name: kafkaimage-kafkanet
+    name: network1
+  shared-network2:
+    external: true
+    name: network2
+  shared-network3:
+    external: true
+    name: network3
+
+  

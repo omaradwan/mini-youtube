@@ -11,6 +11,7 @@ services:
       KAFKA_GROUP_ID: g
     networks:
       - shared-network
+      - shared-network2
   
   consumer2:
     build: .
@@ -21,6 +22,7 @@ services:
       KAFKA_GROUP_ID: g
     networks:
       - shared-network
+      - shared-network2
 
 
 
@@ -33,6 +35,7 @@ services:
       KAFKA_GROUP_ID: g
     networks:
       - shared-network
+      - shared-network2
 
   # minio:
   #   image: quay.io/minio/minio
@@ -54,4 +57,7 @@ services:
 networks:
   shared-network:
     external: true
-    name: kafkaimage-kafkanet  
+    name: network4  
+  shared-network2:
+    external: true
+    name: network5  

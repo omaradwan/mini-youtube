@@ -17,8 +17,12 @@ services:
     restart: unless-stopped
     networks:
       - shared-network
+      - shared-network2
 
 networks:
   shared-network:
     external: true
-    name: kafkaimage-kafkanet
+    name: network2
+  shared-network2:
+    external: true
+    name: network5
