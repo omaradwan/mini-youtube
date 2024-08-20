@@ -28,11 +28,16 @@ const producer=kafka.producer({
  const upload = asyncHandler(async (req, res, next) => {
   
    
-
-    // still need to check that this user has already an account
+    //  need to check that this user has already an account
+    if(!req.isAuth){
+      throw new Error("not authenticated")
+    }
+    let userId=req.userId;
+     
 
     const busboy =  Busboy({ headers: req.headers });// know the header of the file to know how it will parse it
     const formData={};
+    formData["userId"]=userId;
     busboy.on('field', (fieldname, val) => {
       console.log(`Field [${fieldname}]: ${val}`);
       formData[fieldname] = val;
@@ -97,15 +102,19 @@ process.on('SIGINT', async () => {
 
 
 const watch=asyncHandler(async(req,res,next)=>{
-       const result={err:[],status:"successfull"};  
-       const {userId,url,quality}=req.body;
-      
-       const checkUser=await User.findByPk(userId)
-       if(!checkUser){
-            result.err.push("invalid user id");
-            result.status='failed';
-            return res.status(400).json(result);
+       if(!req.isAuth){
+         throw new Error("not authenticated")
        }
+       let userId=req.userId;
+       const result={err:[],status:"successfull"};  
+       const {url,quality}=req.body;
+      
+      //  const checkUser=await User.findByPk(userId)
+      //  if(!checkUser){
+      //       result.err.push("invalid user id");
+      //       result.status='failed';
+      //       return res.status(400).json(result);
+      //  }
        const video=await Video.findOne({
         where:{
           url:url
