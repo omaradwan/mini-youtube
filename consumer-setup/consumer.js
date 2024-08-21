@@ -14,10 +14,10 @@ const kafka = new Kafka ({
 
 const minioClient = new minio.Client({
   endPoint: "minio",
-  port: 9000,
+  port: process.env.minioPort,
   useSSL: false,
-  accessKey: "storedObject",
-  secretKey: "CHANGEME123"
+  accessKey: process.env.minioaccessKey,
+  secretKey: process.env.miniosecretKey
 });
 
 
@@ -143,7 +143,7 @@ const SaveInDB=async(url,title,description,userId)=>{
   })
   await newVideo.save();
 }catch(err){
-  console.log("saving in vide DB" ,err);
+  console.log("error saving video in DB" ,err);
 }
   
 }

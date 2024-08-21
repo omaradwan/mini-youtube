@@ -61,26 +61,19 @@ services:
       - shared-network
       - shared-network2
 
-  # kafka-init:
-  #   image: bitnami/kafka:latest
-  #   depends_on:
-  #     - kafka1
-  #     - kafka2
-  #   networks:
-  #     - shared-network
 volumes:
   kafka-data1:
     driver: local
-    # driver_opts:
-    #   type: "none"
-    #   o: "bind"
-    #   device: "C:\\path\\to\\local\\kafka-data1"
+    driver_opts:
+      type: "none"
+      o: "bind"
+      device: "D:/mini youtube/kafka1mount"
   kafka-data2:
     driver: local
-    # driver_opts:
-    #   type: "none"
-    #   o: "bind"
-    #   device: "C:\\path\\to\\local\\kafka-data2"
+    driver_opts:
+      type: "none"
+      o: "bind"
+      device: "D:/mini youtube/kafka2mount"
 
 networks:
   shared-network:

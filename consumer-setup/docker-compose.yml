@@ -20,6 +20,9 @@ services:
       KAFKA_BROKER: kafka1:9092,kafka2:9092
       KAFKA_TOPIC: video
       KAFKA_GROUP_ID: g
+      minioPort: 9000
+      minioaccessKey: storedObject
+      miniosecretKey: CHANGEME123
     networks:
       - shared-network
       - shared-network2
@@ -33,6 +36,9 @@ services:
       KAFKA_BROKER: kafka1:9092,kafka2:9092
       KAFKA_TOPIC: video
       KAFKA_GROUP_ID: g
+      minioPort: 9000
+      minioaccessKey: storedObject
+      miniosecretKey: CHANGEME123
     networks:
       - shared-network
       - shared-network2
