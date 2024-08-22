@@ -14,7 +14,7 @@ const kafka = new Kafka ({
 
 const minioClient = new minio.Client({
   endPoint: "minio",
-  port: process.env.minioPort,
+  port: 9000,
   useSSL: false,
   accessKey: process.env.minioaccessKey,
   secretKey: process.env.miniosecretKey

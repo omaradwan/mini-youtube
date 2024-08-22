@@ -16,6 +16,11 @@ const subscribe=asyncHandler(async(req,res,next)=>{
 
     let {subscribedToId}=req.body;
     let subscriberId=req.userId;
+    if(subscriberId==subscribedToId){
+        result.err.push("user can not subscribed to himself")
+        result.status="failed"
+        return res.status(400).json(result)
+    }
     if(!subscriberId||!subscribedToId){
         result.err.push("there is missing id");
         result.status="Failed";
@@ -32,6 +37,16 @@ const subscribe=asyncHandler(async(req,res,next)=>{
         result.err.push("subscriberto Id is not correct");
         result.status="Failed";
         return res.status(400).json(result);
+    }
+    let checkSub=await subscription.findOne({
+        where:{
+            subscriberId:subscriberId,
+            subscribedToId:subscribedToId
+        }
+    })
+    if(checkSub){
+         result.status="failed"
+        return res.status(400).json({msg:"you have already subscribed to this channel",status:result.status});
     }
     let newSubscribtion=new subscription({
         subscriberId:subscriberId,
@@ -86,9 +101,10 @@ const cancelSub=asyncHandler(async(req,res,next)=>{
         result.status="Failed"
         return res.status(400).json(result)
     }
+    
     await User.decrement("noOfSubscribers",{
         where:{
-            id:subscribedToId
+            subscribedToId
         }
     }
     )
@@ -115,7 +131,21 @@ const addManageLike=asyncHandler(async(req,res,next)=>{
         result.status="failed";
         return res.status(400).json(result);
     }
+    let checkLike=await Like.findOne({
+        where:{
+            videoId:vid.id,
+            userId:userId,
+            likeType:likeType
+        }
+    })
+    if(checkLike){
+        result.err.push("you have already added/removed liked this video");
+        result.status="failed";
+        return res.status(400).json(result);
+    }
+
     if(likeType==1){
+       
          vid.likeCounts=vid.likeCounts+1;
          const newLike=new Like({
             videoId:vid.id,
@@ -154,6 +184,18 @@ const removeManageLike=asyncHandler(async(req,res,next)=>{
     })
     if(!vid){
         result.err.push("video has been deleted or invalid url");
+        result.status="failed";
+        return res.status(400).json(result);
+    }
+    let checkLike=await Like.findOne({
+        where:{
+            videoId:vid.id,
+            userId:userId,
+            likeType:likeType
+        }
+    })
+    if(checkLike){
+        result.err.push("you have already added/removed disliked this video");
         result.status="failed";
         return res.status(400).json(result);
     }
@@ -201,6 +243,7 @@ const feed=asyncHandler(async(req,res,next)=>{
     })
   //  console.log(subsId);
     if(!subsId){
+        console.log("in");
         let videos=await Video.findAll({
             attributes:['url'],
             limit:6
@@ -214,7 +257,7 @@ const feed=asyncHandler(async(req,res,next)=>{
    // console.log(subsId)
     let numUrlsPerSubscriber=Math.ceil(subsId.length/6);
     let VideosUrl=[]
-
+    console.log(subsId)
     for(var id of subsId){
         let retUrl=await Video.findAll({
             where:{
@@ -238,7 +281,7 @@ const addComment=asyncHandler(async(req,res,next)=>{
     }
     let result={err:[],status:"successfull"}
     let {videoId,comment}=req.body;
-    // will check it by token later
+   
     let userId=req.userId;
     let user=await User.findByPk(userId);
     let vid=await Video.findByPk(videoId);
@@ -287,7 +330,7 @@ const getComment=asyncHandler(async(req,res,next)=>{
         }
     })
     if(!comments){
-        return res.status(200).json({msg:"No comments in this vidoe",status:result.status});
+        return res.status(200).json({msg:"No comments on this video",status:result.status});
     }
     return res.status(200).json({Comments:comments,status:result.status})
 })
