@@ -115,6 +115,7 @@ const watch=asyncHandler(async(req,res,next)=>{
       //       result.status='failed';
       //       return res.status(400).json(result);
       //  }
+      
        const video=await Video.findOne({
         where:{
           url:url
@@ -126,7 +127,7 @@ const watch=asyncHandler(async(req,res,next)=>{
         return res.status(400).json(result);
        }
        let bucket="videostore";
-       let newUrl=`${url}.mp4-${quality}.mp4`;
+       let newUrl=`${url}-${quality}.mp4`;
        console.log(newUrl)
        try{
          const statObject=await minioClient.statObject(bucket,newUrl);
