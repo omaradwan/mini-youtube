@@ -46,19 +46,19 @@ MinIO is used as the object store in this project for several reasons:
 
 The following diagram illustrates the primary use cases of the Mini YouTube platform, including video uploads, processing, and storage.
 
-![Use Case Diagram](https://lucid.app/lucidchart/bb3c3d61-175d-4d95-8dea-e2fb94c4fc17/edit?viewport_loc=-313%2C-991%2C3345%2C1570%2C0_0&invitationId=inv_c5b19f9c-2a5c-480f-b527-dbc253f6d74e)
+You can view the Use Case Diagram [here](https://lucid.app/lucidchart/bb3c3d61-175d-4d95-8dea-e2fb94c4fc17/edit?viewport_loc=-313%2C-991%2C3345%2C1570%2C0_0&invitationId=inv_c5b19f9c-2a5c-480f-b527-dbc253f6d74e)
 
 ## Containers Network Diagram
 
 This diagram depicts the network configuration between the containers, showing how Nginx, the main server, Kafka, MinIO, and PostgreSQL interact.
 
-![Containers Network Diagram]([path/to/your/containers-network-diagram.png](https://lucid.app/lucidspark/b0036f47-d417-4d98-b52f-5a2cca7138ee/edit?viewport_loc=-4922%2C-3529%2C12682%2C6135%2C0_0&invitationId=inv_2e061d1a-44e7-4ccd-9439-0e21baab269b))
+You can view the Containers Network  Diagram [here](https://lucid.app/lucidspark/b0036f47-d417-4d98-b52f-5a2cca7138ee/edit?viewport_loc=-4922%2C-3529%2C12682%2C6135%2C0_0&invitationId=inv_2e061d1a-44e7-4ccd-9439-0e21baab269b)
 
 ## System Design Diagram
 
 Here is an overview of the system design, detailing the flow of data from video upload to processing and final storage.
 
-![System Design Diagram](https://lucid.app/lucidchart/38c52863-b917-4ce8-a2ca-9bde05773a7e/edit?invitationId=inv_fa8d6106-b7b1-4a32-87f9-e5ca650347f3)
+You can view the System Design Diagram [here](https://lucid.app/lucidchart/38c52863-b917-4ce8-a2ca-9bde05773a7e/edit?invitationId=inv_fa8d6106-b7b1-4a32-87f9-e5ca650347f3)
 ## Database Schema
 
 https://cdn.discordapp.com/attachments/1044174357754286123/1262401387459776633/image.png?ex=66ce7e29&is=66cd2ca9&hm=0ef15aac805929c07fdd04bef40f12af1798e53a43032c422807609830d29b3a&
