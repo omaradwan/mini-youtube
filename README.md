@@ -58,8 +58,7 @@ This diagram depicts the network configuration between the containers, showing h
 
 Here is an overview of the system design, detailing the flow of data from video upload to processing and final storage.
 
-![System Design Diagram]([https://lucid.app/lucidchart/38c52863-b917-4ce8-a2ca-9bde05773a7e/edit?viewport_loc=-60%2C-226%2C2928%2C1374%2C0_0&invitationId=inv_fa8d6106-b7b1-4a32-87f9-e5ca650347f3](https://lucid.app/lucidchart/38c52863-b917-4ce8-a2ca-9bde05773a7e/edit?viewport_loc=-228%2C-187%2C3139%2C1473%2C0_0&invitationId=inv_fa8d6106-b7b1-4a32-87f9-e5ca650347f3))
-
+![System Design Diagram]https://lucid.app/lucidchart/38c52863-b917-4ce8-a2ca-9bde05773a7e/edit?invitationId=inv_fa8d6106-b7b1-4a32-87f9-e5ca650347f3
 ## Database Schema
 
 https://cdn.discordapp.com/attachments/1044174357754286123/1262401387459776633/image.png?ex=66ce7e29&is=66cd2ca9&hm=0ef15aac805929c07fdd04bef40f12af1798e53a43032c422807609830d29b3a&
