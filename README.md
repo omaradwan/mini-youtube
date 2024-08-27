@@ -61,4 +61,5 @@ Here is an overview of the system design, detailing the flow of data from video 
 You can view the System Design Diagram [here](https://lucid.app/lucidchart/38c52863-b917-4ce8-a2ca-9bde05773a7e/edit?invitationId=inv_fa8d6106-b7b1-4a32-87f9-e5ca650347f3)
 ## Database Schema
 
-https://cdn.discordapp.com/attachments/1044174357754286123/1262401387459776633/image.png?ex=66ce7e29&is=66cd2ca9&hm=0ef15aac805929c07fdd04bef40f12af1798e53a43032c422807609830d29b3a&
+![image](https://github.com/user-attachments/assets/05f21b05-01f4-4734-9f66-93cdbb1dc26b)
+
