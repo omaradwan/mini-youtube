@@ -1,6 +1,6 @@
 # Mini YouTube
 
-Mini YouTube is a scalable video processing platform that leverages Apache Kafka, Docker, MinIO, PostgreSQL, and Nginx. It allows users to upload videos, processes them asynchronously, and stores them in different formats using an efficient microservices architecture.
+**Mini YouTube** is a scalable video processing platform built with **Node.js**. It leverages **Apache Kafka** for asynchronous messaging, **Docker** for containerization, and **MinIO** for object storage. The application allows users to upload videos, which are processed into multiple formats and stored efficiently. The architecture includes a PostgreSQL database for managing metadata, and **Nginx** for load balancing across multiple server containers, ensuring high availability and scalability.
 
 ## Introduction
 
